@@ -1,0 +1,90 @@
+<button id="menuButton"
+        class="md:hidden p-3 rounded-md bg-blue-500 text-white focus:outline-none focus:ring-2 focus:ring-blue-400 fixed top-4 left-4 z-50"
+        (click)="toggleSidebar()">
+    <ng-container *ngIf="!isSidebarOpen">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+    </ng-container>
+    <ng-container *ngIf="isSidebarOpen">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+    </ng-container>
+</button>
+
+<aside
+    #sidebarElement
+    [ngClass]="{
+        '-translate-x-full': !isSidebarOpen && windowRef.innerWidth < 768,
+        'md:relative': true,
+        'md:translate-x-0': true
+    }"
+    class="fixed inset-y-0 left-0 bg-white w-64 p-5 flex flex-col justify-between shadow-lg transition-transform duration-300 ease-in-out rounded-r-lg custom-scrollbar overflow-y-auto z-50">
+    <div>
+        <div class="flex items-center mb-8 p-3 bg-blue-50 rounded-lg">
+            <img src="https://via.placeholder.com/60" alt="User Photo" class="w-14 h-14 rounded-full border-2 border-blue-400 mr-4 shadow-md">
+            <h2 class="text-lg font-semibold text-gray-800">Nombre del Usuario</h2>
+        </div>
+
+        <nav>
+            <p class="text-xs font-semibold text-gray-500 uppercase mb-4 tracking-wider">Secciones</p>
+            <ul>
+                <li class="mb-2">
+                    <a routerLink="/proveedores" routerLinkActive="bg-blue-100 text-blue-700 font-semibold" class="flex items-center p-3 text-gray-700 hover:bg-blue-100 hover:text-blue-700 rounded-md transition-colors duration-200">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H2m20 0h-3V10a6 6 0 00-6-6H9a6 6 0 00-6 6v10m.995 0h.01m-.01 0h.01"></path></svg>
+                        Proveedores
+                    </a>
+                </li>
+                <li class="mb-2">
+                    <a routerLink="/productos" routerLinkActive="bg-blue-100 text-blue-700 font-semibold" class="flex items-center p-3 text-gray-700 hover:bg-blue-100 hover:text-blue-700 rounded-md transition-colors duration-200">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
+                        Productos
+                    </a>
+                </li>
+                <li class="mb-2">
+                    <a routerLink="/tipos" routerLinkActive="bg-blue-100 text-blue-700 font-semibold" class="flex items-center p-3 text-gray-700 hover:bg-blue-100 hover:text-blue-700 rounded-md transition-colors duration-200">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>
+                        Tipos
+                    </a>
+                </li>
+                <li class="mb-2">
+                    <a routerLink="/ventas" routerLinkActive="bg-blue-100 text-blue-700 font-semibold" class="flex items-center p-3 text-gray-700 hover:bg-blue-100 hover:text-blue-700 rounded-md transition-colors duration-200">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h10m-9 4h8a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
+                        Ventas
+                    </a>
+                </li>
+                <li class="mb-2">
+                    <a routerLink="/notas-entradas" routerLinkActive="bg-blue-100 text-blue-700 font-semibold" class="flex items-center p-3 text-gray-700 hover:bg-blue-100 hover:text-blue-700 rounded-md transition-colors duration-200">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                        Notas de Entradas
+                    </a>
+                </li>
+                <li class="mb-2">
+                    <a routerLink="/notas-salidas" routerLinkActive="bg-blue-100 text-blue-700 font-semibold" class="flex items-center p-3 text-gray-700 hover:bg-blue-100 hover:text-blue-700 rounded-md transition-colors duration-200">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                        Notas de Salidas
+                    </a>
+                </li>
+                <li class="mb-2">
+                    <a routerLink="/usuarios" routerLinkActive="bg-blue-100 text-blue-700 font-semibold" class="flex items-center p-3 text-gray-700 hover:bg-blue-100 hover:text-blue-700 rounded-md transition-colors duration-200">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M12 20v-7m-4-3h8a4 4 0 004-4V6a4 4 0 00-4-4H8a4 4 0 00-4 4v7a4 4 0 004 4z"></path></svg>
+                        Usuarios
+                    </a>
+                </li>
+                <li class="mb-2">
+                    <a routerLink="/roles" routerLinkActive="bg-blue-100 text-blue-700 font-semibold" class="flex items-center p-3 text-gray-700 hover:bg-blue-100 hover:text-blue-700 rounded-md transition-colors duration-200">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h10a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0h4"></path></svg>
+                        Roles
+                    </a>
+                </li>
+                <li class="mb-2">
+                    <a routerLink="/permisos" routerLinkActive="bg-blue-100 text-blue-700 font-semibold" class="flex items-center p-3 text-gray-700 hover:bg-blue-100 hover:text-blue-700 rounded-md transition-colors duration-200">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.008 12.008 0 002 12c0 2.978 1.155 5.756 3.12 7.915C5.908 20.884 8.279 22 12 22s6.092-1.116 8.88-3.085A12.008 12.008 0 0022 12c0-2.978-1.155-5.756-3.12-7.915z"></path></svg>
+                        Permisos
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="mt-8 text-center text-sm text-gray-400">
+        © 2023 Tu Empresa.
+    </div>
+</aside>
