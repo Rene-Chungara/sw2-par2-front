@@ -1,7 +1,9 @@
-<div class="flex bg-gray-100 min-h-screen">
-    <app-sidebar></app-sidebar>
+<div class="flex min-h-screen bg-gray-100">
+  <!-- Sidebar -->
+  <app-sidebar class="w-64"></app-sidebar>
 
-    <div class="flex-1 p-8 md:ml-64 transition-all duration-300 ease-in-out">
-        <router-outlet></router-outlet>
-    </div>
+  <!-- Contenido principal -->
+  <main class="flex-1 p-6">
+    <router-outlet></router-outlet>
+  </main>
 </div>
