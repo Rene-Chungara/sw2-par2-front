@@ -3,12 +3,14 @@ import { RolComponent } from './components/rol/rol.component';
 import { PermisoComponent } from './components/permiso/permiso.component';
 import { TipoComponent } from './components/tipo/tipo.component';
 import { ProveedorComponent } from './components/proveedor/proveedor.component';
+import { ProductoComponent } from './components/producto/producto.component';
 
 export const routes: Routes = [
     { path: 'roles', component: RolComponent },
     { path: 'permisos', component: PermisoComponent },
     { path: 'tipos', component: TipoComponent },
     { path: 'proveedores', component: ProveedorComponent },
+    { path: 'productos', component: ProductoComponent },
 
     { path: '', redirectTo: '/', pathMatch: 'full' },
     { path: '**', redirectTo: '' },

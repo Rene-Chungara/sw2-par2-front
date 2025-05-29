@@ -1,0 +1,89 @@
+<div class="p-6">
+  <h1 class="text-2xl font-semibold mb-4">Gestión de Productos</h1>
+
+    <div class="flex flex-wrap gap-4 items-center mb-4">
+        <button (click)="abrirModal()" class="bg-green-500 text-white px-4 py-2 rounded ml-auto">
+        + Nuevo Producto
+        </button>
+    </div>
+    <!-- Filtros -->
+    <div class="grid md:grid-cols-3 gap-4 mb-6">
+        <input [(ngModel)]="filtroNombre"
+                (input)="aplicarFiltros()"
+                placeholder="Buscar por nombre"
+                class="px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
+
+        <input [(ngModel)]="filtroTipo"
+                (input)="aplicarFiltros()"
+                placeholder="Buscar por tipo"
+                class="px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
+
+        <button (click)="limpiarFiltros()"
+                class="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 transition">
+            Limpiar filtros
+        </button>
+    </div>
+
+  <!-- Tabla de productos -->
+  <div class="overflow-x-auto bg-white rounded shadow">
+    <table class="min-w-full text-sm">
+      <thead>
+        <tr class="bg-gray-100 text-left">
+          <th class="p-3">#</th>
+          <th class="p-3">Nombre</th>
+          <th class="p-3">Descripción</th>
+          <th class="p-3">Precio</th>
+          <th class="p-3">Stock</th>
+          <th class="p-3">Tipo</th>
+          <th class="p-3">Imagen</th>
+          <th class="p-3">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let p of productos" class="border-t">
+          <td class="p-3">{{ p.id }}</td>
+          <td class="p-3">{{ p.nombre }}</td>
+          <td class="p-3">{{ p.descripcion }}</td>
+          <td class="p-3">{{ p.precioVenta | currency:'BOB':'symbol' }}</td>
+          <td class="p-3">{{ p.stock }}</td>
+          <td class="p-3">{{ p.tipo?.nombre }}</td>
+          <td class="p-3">
+            <img *ngIf="p.imagen" [src]="'http://localhost:8080' + p.imagen" class="w-12 h-12 object-cover rounded border" />
+          </td>
+          <td class="p-3 space-x-2">
+            <button (click)="abrirModal(p)" class="bg-yellow-400 px-2 py-1 rounded text-white">Editar</button>
+            <button (click)="eliminarProducto(p.id)" class="bg-red-500 px-2 py-1 rounded text-white">Eliminar</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Modal -->
+  <div *ngIf="modalAbierto" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg shadow-md w-full max-w-xl p-6 relative">
+      <h2 class="text-xl font-bold mb-4">
+        {{ modoEdicion ? 'Editar Producto' : 'Nuevo Producto' }}
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <input [(ngModel)]="productoEnEdicion!.nombre" placeholder="Nombre" class="border p-2 rounded" />
+        <input [(ngModel)]="productoEnEdicion!.precioVenta" type="number" placeholder="Precio de venta" class="border p-2 rounded" />
+        <input [(ngModel)]="productoEnEdicion!.stock" type="number" placeholder="Stock" class="border p-2 rounded" />
+        <select [(ngModel)]="productoEnEdicion!.tipo.id" class="border p-2 rounded">
+          <option [ngValue]="0" disabled>Seleccionar tipo</option>
+          <option *ngFor="let tipo of tipos" [ngValue]="tipo.id">{{ tipo.nombre }}</option>
+        </select>
+        <textarea [(ngModel)]="productoEnEdicion!.descripcion" placeholder="Descripción" class="border p-2 rounded col-span-full"></textarea>
+        <input type="file" (change)="seleccionarImagen($event)" class="col-span-full" />
+      </div>
+
+      <div class="mt-6 flex justify-end gap-2">
+        <button (click)="cerrarModal()" class="bg-gray-500 text-white px-4 py-2 rounded">Cancelar</button>
+        <button (click)="guardarProducto()" class="bg-blue-600 text-white px-4 py-2 rounded">
+          {{ modoEdicion ? 'Actualizar' : 'Guardar' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
