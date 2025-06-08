@@ -1,29 +1,75 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Apollo } from 'apollo-angular';
+import gql from 'graphql-tag';
 
-export interface Rol {
-  id: number;
-  nombre: string;
-}
-
-const API_URL = 'http://localhost:8080/api/roles';
+const LISTAR_ROLES_QUERY = gql`
+  query {
+    listarRoles {
+      id
+      nombre
+    }
+  }
+`;
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class RolService {
-  constructor(private http: HttpClient) {}
+  constructor(private apollo: Apollo) {}
 
-  getRoles(): Observable<Rol[]> {
-    return this.http.get<Rol[]>(API_URL);
+  obtenerRoles() {
+    return this.apollo.watchQuery<any>({
+      query: LISTAR_ROLES_QUERY,
+    }).valueChanges;
   }
 
-  createRol(nombre: string): Observable<Rol> {
-    return this.http.post<Rol>(API_URL, { nombre });
+  crearRol(nombre: string) {
+    return this.apollo.mutate({
+      mutation: gql`
+        mutation ($nombre: String!) {
+          crearRol(nombre: $nombre) {
+            id
+            nombre
+          }
+        }
+      `,
+      variables: { nombre },
+      update: (cache, { data }) => {
+        const nuevo = (data as any)?.crearRol;
+        if (!nuevo) return;
+
+        const existing: any = cache.readQuery({ query: LISTAR_ROLES_QUERY });
+        if (existing?.listarRoles) {
+          cache.writeQuery({
+            query: LISTAR_ROLES_QUERY,
+            data: {
+              listarRoles: [...existing.listarRoles, nuevo],
+            },
+          });
+        }
+      },
+    });
   }
 
-  deleteRol(id: number): Observable<void> {
-    return this.http.delete<void>(`${API_URL}/${id}`);
+  eliminarRol(id: number) {
+    return this.apollo.mutate({
+      mutation: gql`
+        mutation ($id: ID!) {
+          eliminarRol(id: $id)
+        }
+      `,
+      variables: { id: String(id) },
+      update: (cache) => {
+        const existing: any = cache.readQuery({ query: LISTAR_ROLES_QUERY });
+        if (existing?.listarRoles) {
+          cache.writeQuery({
+            query: LISTAR_ROLES_QUERY,
+            data: {
+              listarRoles: existing.listarRoles.filter((r: any) => r.id !== String(id)),
+            },
+          });
+        }
+      },
+    });
   }
 }

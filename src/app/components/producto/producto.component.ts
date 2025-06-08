@@ -1,24 +1,25 @@
 import { Component, OnInit } from '@angular/core';
+import { ProductoService } from '../../services/producto.service';
+import { TipoService } from '../../services/tipo.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
-import { ProductoService, Producto } from '../../services/producto.service';
-import { TipoService, Tipo } from '../../services/tipo.service';
 
 @Component({
   selector: 'app-producto',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
-  templateUrl: './producto.component.html'
+  imports: [FormsModule, CommonModule],
+  templateUrl: './producto.component.html',
 })
 export class ProductoComponent implements OnInit {
-  productos: Producto[] = [];
-  tipos: Tipo[] = [];
+  productos: any[] = [];
+  tipos: any[] = [];
 
   modalAbierto = false;
   modoEdicion = false;
-  productoEnEdicion: Producto | null = null;
-  imagenSeleccionada: File | null = null;
+  productoEnEdicion: any = {};
+
+  filtroNombre = '';
+  filtroTipo = '';
 
   constructor(
     private productoService: ProductoService,
@@ -26,132 +27,74 @@ export class ProductoComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.obtenerProductos();
-    this.obtenerTipos();
-  }
-
-  obtenerProductos(): void {
-    this.productoService.getProductos().subscribe({
-      next: data => this.productos = data.sort((a, b) => a.id - b.id),
-      error: err => console.error('Error al obtener productos', err)
+    this.cargarProductos();
+    this.tipoService.listarTipos().subscribe((res: any) => {
+      this.tipos = res.data.listarTipos;
     });
   }
 
-  obtenerTipos(): void {
-    this.tipoService.getTipos().subscribe({
-      next: data => this.tipos = data,
-      error: err => console.error('Error al obtener tipos', err)
+  cargarProductos() {
+    this.productoService.listarProductos().subscribe((res: any) => {
+      this.productos = res.data.listarProductos;
     });
   }
 
-  abrirModal(producto?: Producto): void {
+  abrirModal(producto: any = null) {
     this.modalAbierto = true;
-    if (producto) {
-      this.modoEdicion = true;
-      this.productoEnEdicion = { ...producto };
-    } else {
-      this.modoEdicion = false;
-      this.productoEnEdicion = {
-        id: null as any,
-        nombre: '',
-        descripcion: '',
-        precioVenta: 0,
-        stock: 0,
-        imagen: '',
-        tipo: { id: 0, nombre: ''}
-      };
-    }
-    this.imagenSeleccionada = null;
+    this.modoEdicion = !!producto;
+    this.productoEnEdicion = producto
+      ? JSON.parse(JSON.stringify(producto))
+      : {
+          nombre: '',
+          precioVenta: 0,
+          stock: 0,
+          descripcion: '',
+          imagen: '',
+          tipo: { id: 0 },
+        };
   }
 
-  cerrarModal(): void {
+  cerrarModal() {
     this.modalAbierto = false;
-    this.productoEnEdicion = null;
-    this.imagenSeleccionada = null;
   }
 
-  seleccionarImagen(event: any): void {
+  seleccionarImagen(event: any) {
     const file = event.target.files[0];
-    if (file) {
-      this.imagenSeleccionada = file;
-    }
+    if (!file) return;
+
+    this.productoService.subirImagen(file).subscribe((res: any) => {
+      this.productoEnEdicion.imagen = res.path;
+    });
   }
 
-  guardarProducto(): void {
-    if (!this.productoEnEdicion) return;
-
-    const ejecutarGuardar = () => {
-      const data = {
-        ...this.productoEnEdicion,
-        tipo: { id: this.productoEnEdicion!.tipo.id } // solo ID
-      };
-
-      const llamada = this.modoEdicion
-        ? this.productoService.updateProducto(this.productoEnEdicion!.id, data)
-        : this.productoService.createProducto(data);
-
-      llamada.subscribe({
-        next: () => {
-          this.obtenerProductos();
-          this.cerrarModal();
-        },
-        error: (err) => console.error('Error al guardar producto', err)
-      });
+  guardarProducto() {
+    const datos = {
+      ...this.productoEnEdicion,
+      tipoId: this.productoEnEdicion.tipo.id,
     };
 
-    if (this.imagenSeleccionada) {
-      this.productoService.uploadImagen(this.imagenSeleccionada).subscribe({
-        next: res => {
-          this.productoEnEdicion!.imagen = res.ruta;
-          ejecutarGuardar();
-        },
-        error: err => {
-          console.error('Error al subir imagen', err);
-        }
-      });
-    } else {
-      ejecutarGuardar();
-    }
-  }
+    const accion = this.modoEdicion
+      ? this.productoService.actualizarProducto(datos)
+      : this.productoService.crearProducto(datos);
 
-  eliminarProducto(id: number): void {
-    this.productoService.deleteProducto(id).subscribe(() => {
-      this.obtenerProductos();
+    accion.subscribe(() => {
+      this.cerrarModal();
+      this.cargarProductos();
     });
   }
 
-  filtroNombre = '';
-  filtroTipo = '';
-  aplicarFiltros(): void {
-    if (this.filtroNombre.trim()) {
-      this.productoService.buscarPorNombre(this.filtroNombre.trim()).subscribe({
-        next: data => this.productos = data.sort((a, b) => a.id - b.id),
-        error: err => console.error('Error al buscar por nombre', err)
-      });
-    } else if (this.filtroTipo.trim()) {
-      this.productoService.buscarPorTipo(this.filtroTipo.trim()).subscribe({
-        next: data => this.productos = data.sort((a, b) => a.id - b.id),
-        error: err => console.error('Error al buscar por tipo', err)
-      });
-    } else {
-      this.obtenerProductos();
-    }
+  eliminarProducto(id: number) {
+    this.productoService.eliminarProducto(id).subscribe(() => {
+      this.cargarProductos();
+    });
   }
 
-  limpiarFiltros(): void {
+  aplicarFiltros() {
+    // Tu lógica de filtros si aplica
+  }
+
+  limpiarFiltros() {
     this.filtroNombre = '';
     this.filtroTipo = '';
-    this.obtenerProductos();
-  }
-
-  imagenPrevia(): string {
-    return this.imagenSeleccionada ? URL.createObjectURL(this.imagenSeleccionada) : '';
-  }
-
-  quitarImagen(): void {
-    this.imagenSeleccionada = null;
-    if (this.productoEnEdicion) {
-      this.productoEnEdicion.imagen = '';
-    }
   }
 }

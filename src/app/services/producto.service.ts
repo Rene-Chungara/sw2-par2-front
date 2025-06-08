@@ -1,55 +1,120 @@
 import { Injectable } from '@angular/core';
+import { Apollo } from 'apollo-angular';
+import gql from 'graphql-tag';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
 
-const API_URL = 'http://localhost:8080/api/productos';
+const BASE_URL = 'http://localhost:8080';
 
-export interface Producto {
-  id: number;
-  nombre: string;
-  descripcion: string;
-  precioVenta: number;
-  stock: number;
-  imagen: string;
-  tipo: {
-    id: number;
-    nombre: string;
-  };
-}
+const LISTAR_PRODUCTOS_QUERY = gql`
+  query {
+    listarProductos {
+      id
+      nombre
+      precioVenta
+      imagen
+      stock
+      descripcion
+      tipo {
+        id
+        nombre
+      }
+    }
+  }
+`;
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class ProductoService {
-  constructor(private http: HttpClient) {}
+  constructor(private apollo: Apollo, private http: HttpClient) {}
 
-  getProductos(): Observable<Producto[]> {
-    return this.http.get<Producto[]>(API_URL);
+  listarProductos() {
+    return this.apollo.watchQuery<any>({
+      query: LISTAR_PRODUCTOS_QUERY,
+    }).valueChanges;
   }
 
-  createProducto(data: any): Observable<Producto> {
-    return this.http.post<Producto>(API_URL, data);
+  crearProducto(producto: any) {
+    return this.apollo.mutate({
+      mutation: gql`
+        mutation (
+          $nombre: String!
+          $precioVenta: Float!
+          $imagen: String!
+          $stock: Int!
+          $descripcion: String!
+          $tipoId: ID!
+        ) {
+          crearProducto(
+            nombre: $nombre
+            precioVenta: $precioVenta
+            imagen: $imagen
+            stock: $stock
+            descripcion: $descripcion
+            tipoId: $tipoId
+          ) {
+            id
+            nombre
+            imagen
+            tipo { id nombre }
+          }
+        }
+      `,
+      variables: {
+        ...producto,
+        tipoId: String(producto.tipoId),
+      },
+    });
   }
 
-  updateProducto(id: number, data: any): Observable<Producto> {
-    return this.http.put<Producto>(`${API_URL}/${id}`, data);
+  actualizarProducto(producto: any) {
+    return this.apollo.mutate({
+      mutation: gql`
+        mutation (
+          $id: ID!
+          $nombre: String!
+          $precioVenta: Float!
+          $imagen: String!
+          $stock: Int!
+          $descripcion: String!
+          $tipoId: ID!
+        ) {
+          actualizarProducto(
+            id: $id
+            nombre: $nombre
+            precioVenta: $precioVenta
+            imagen: $imagen
+            stock: $stock
+            descripcion: $descripcion
+            tipoId: $tipoId
+          ) {
+            id
+            nombre
+            imagen
+            tipo { id nombre }
+          }
+        }
+      `,
+      variables: {
+        ...producto,
+        tipoId: String(producto.tipoId),
+        id: String(producto.id),
+      },
+    });
   }
 
-  deleteProducto(id: number): Observable<void> {
-    return this.http.delete<void>(`${API_URL}/${id}`);
+  eliminarProducto(id: number) {
+    return this.apollo.mutate({
+      mutation: gql`
+        mutation ($id: ID!) {
+          eliminarProducto(id: $id)
+        }
+      `,
+      variables: { id: String(id) },
+    });
   }
 
-  uploadImagen(file: File): Observable<{ ruta: string }> {
+  subirImagen(file: File) {
     const formData = new FormData();
     formData.append('file', file);
-    return this.http.post<{ ruta: string }>(`${API_URL}/upload`, formData);
-  }
-
-  buscarPorNombre(nombre: string): Observable<Producto[]> {
-    return this.http.get<Producto[]>(`${API_URL}/buscar/nombre/${nombre}`);
-  }
-
-  buscarPorTipo(nombre: string): Observable<Producto[]> {
-    return this.http.get<Producto[]>(`${API_URL}/buscar/tipo/${nombre}`);
+    return this.http.post<{ path: string }>(`${BASE_URL}/uploads`, formData);
   }
 }

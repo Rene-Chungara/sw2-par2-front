@@ -1,87 +1,111 @@
-<div class="p-6">
-  <h1 class="text-2xl font-semibold mb-4">Gestión de Productos</h1>
+<div class="p-6 bg-gray-50 min-h-screen">
+  <h1 class="text-3xl font-extrabold text-gray-800 mb-6">Gestión de Productos</h1>
 
-    <div class="flex flex-wrap gap-4 items-center mb-4">
-        <button (click)="abrirModal()" class="bg-green-500 text-white px-4 py-2 rounded ml-auto">
-        + Nuevo Producto
-        </button>
+  <div class="flex justify-end mb-6">
+    <button (click)="abrirModal()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:-translate-y-1">
+      <i class="fas fa-plus-circle mr-2"></i> + Nuevo Producto
+    </button>
+  </div>
+
+  <div class="grid md:grid-cols-4 gap-4 mb-8 bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+    <input [(ngModel)]="filtroNombre"
+           (input)="aplicarFiltros()"
+           placeholder="Buscar por nombre..."
+           class="px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 ease-in-out" />
+
+    <input [(ngModel)]="filtroTipo"
+           (input)="aplicarFiltros()"
+           placeholder="Buscar por tipo..."
+           class="px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 ease-in-out" />
+
+    <div class="md:col-span-2 flex justify-end">
+      <button (click)="limpiarFiltros()"
+              class="bg-gray-200 text-gray-700 font-semibold px-5 py-2 rounded-lg hover:bg-gray-300 transition duration-300 ease-in-out w-full md:w-auto">
+        Limpiar filtros
+      </button>
     </div>
-    <!-- Filtros -->
-    <div class="grid md:grid-cols-3 gap-4 mb-6">
-        <input [(ngModel)]="filtroNombre"
-                (input)="aplicarFiltros()"
-                placeholder="Buscar por nombre"
-                class="px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
+  </div>
 
-        <input [(ngModel)]="filtroTipo"
-                (input)="aplicarFiltros()"
-                placeholder="Buscar por tipo"
-                class="px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
-
-        <button (click)="limpiarFiltros()"
-                class="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 transition">
-            Limpiar filtros
-        </button>
-    </div>
-
-  <!-- Tabla de productos -->
-  <div class="overflow-x-auto bg-white rounded shadow">
-    <table class="min-w-full text-sm">
+  <div class="overflow-x-auto bg-white rounded-lg shadow-lg border border-gray-200">
+    <table class="min-w-full text-sm leading-normal">
       <thead>
-        <tr class="bg-gray-100 text-left">
-          <th class="p-3">#</th>
-          <th class="p-3">Nombre</th>
-          <th class="p-3">Descripción</th>
-          <th class="p-3">Precio</th>
-          <th class="p-3">Stock</th>
-          <th class="p-3">Tipo</th>
-          <th class="p-3">Imagen</th>
-          <th class="p-3">Acciones</th>
+        <tr class="bg-gray-100 text-gray-600 uppercase text-left text-xs font-semibold">
+          <th class="p-4 rounded-tl-lg">#</th>
+          <th class="p-4">Nombre</th>
+          <th class="p-4">Descripción</th>
+          <th class="p-4">Precio</th>
+          <th class="p-4">Stock</th>
+          <th class="p-4">Tipo</th>
+          <th class="p-4">Imagen</th>
+          <th class="p-4 rounded-tr-lg text-center">Acciones</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let p of productos" class="border-t">
-          <td class="p-3">{{ p.id }}</td>
-          <td class="p-3">{{ p.nombre }}</td>
-          <td class="p-3">{{ p.descripcion }}</td>
-          <td class="p-3">{{ p.precioVenta | currency:'BOB':'symbol' }}</td>
-          <td class="p-3">{{ p.stock }}</td>
-          <td class="p-3">{{ p.tipo?.nombre }}</td>
-          <td class="p-3">
-            <img *ngIf="p.imagen" [src]="'http://localhost:8080' + p.imagen" class="w-12 h-12 object-cover rounded border" />
+        <tr *ngFor="let p of productos" class="border-t border-gray-200 hover:bg-gray-50 transition duration-150 ease-in-out">
+          <td class="p-4">{{ p.id }}</td>
+          <td class="p-4 font-medium text-gray-900">{{ p.nombre }}</td>
+          <td class="p-4 text-gray-700">{{ p.descripcion }}</td>
+          <td class="p-4 font-semibold text-blue-600">{{ p.precioVenta | currency:'BOB':'symbol' }}</td>
+          <td class="p-4">{{ p.stock }}</td>
+          <td class="p-4">{{ p.tipo?.nombre }}</td>
+          <td class="p-4">
+            <img *ngIf="p.imagen" [src]="'http://localhost:8080' + p.imagen"
+                 class="w-16 h-16 object-cover rounded-md border border-gray-200 shadow-sm" alt="Producto Imagen" />
+            <span *ngIf="!p.imagen" class="text-gray-400 text-xs">Sin imagen</span>
           </td>
-          <td class="p-3 space-x-2">
-            <button (click)="abrirModal(p)" class="bg-yellow-400 px-2 py-1 rounded text-white">Editar</button>
-            <button (click)="eliminarProducto(p.id)" class="bg-red-500 px-2 py-1 rounded text-white">Eliminar</button>
+          <td class="p-4 text-center space-x-3">
+            <button (click)="abrirModal(p)" class="bg-yellow-500 hover:bg-yellow-600 text-white font-medium px-3 py-1.5 rounded-md text-xs transition duration-200 ease-in-out">
+              Editar
+            </button>
+            <button (click)="eliminarProducto(p.id)" class="bg-red-500 hover:bg-red-600 text-white font-medium px-3 py-1.5 rounded-md text-xs transition duration-200 ease-in-out">
+              Eliminar
+            </button>
           </td>
+        </tr>
+        <tr *ngIf="productos.length === 0">
+            <td colspan="8" class="p-4 text-center text-gray-500">No hay productos para mostrar.</td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <!-- Modal -->
-  <div *ngIf="modalAbierto" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-    <div class="bg-white rounded-lg shadow-md w-full max-w-xl p-6 relative">
-      <h2 class="text-xl font-bold mb-4">
+  <div *ngIf="modalAbierto" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl p-8 relative transform scale-100 opacity-100 transition-all duration-300 ease-out">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6 border-b pb-3">
         {{ modoEdicion ? 'Editar Producto' : 'Nuevo Producto' }}
       </h2>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <input [(ngModel)]="productoEnEdicion!.nombre" placeholder="Nombre" class="border p-2 rounded" />
-        <input [(ngModel)]="productoEnEdicion!.precioVenta" type="number" placeholder="Precio de venta" class="border p-2 rounded" />
-        <input [(ngModel)]="productoEnEdicion!.stock" type="number" placeholder="Stock" class="border p-2 rounded" />
-        <select [(ngModel)]="productoEnEdicion!.tipo.id" class="border p-2 rounded">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <input [(ngModel)]="productoEnEdicion!.nombre" placeholder="Nombre del producto" class="border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200" />
+        <input [(ngModel)]="productoEnEdicion!.precioVenta" type="number" placeholder="Precio de venta" class="border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200" />
+        <input [(ngModel)]="productoEnEdicion!.stock" type="number" placeholder="Stock disponible" class="border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200" />
+
+        <select [(ngModel)]="productoEnEdicion!.tipo.id" class="border border-gray-300 p-3 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200">
           <option [ngValue]="0" disabled>Seleccionar tipo</option>
           <option *ngFor="let tipo of tipos" [ngValue]="tipo.id">{{ tipo.nombre }}</option>
         </select>
-        <textarea [(ngModel)]="productoEnEdicion!.descripcion" placeholder="Descripción" class="border p-2 rounded col-span-full"></textarea>
-        <input type="file" (change)="seleccionarImagen($event)" class="col-span-full" />
+
+        <textarea [(ngModel)]="productoEnEdicion!.descripcion"
+                  placeholder="Descripción detallada del producto" rows="4" class="border border-gray-300 p-3 rounded-lg col-span-full resize-y focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"></textarea>
+
+        <div class="col-span-full">
+          <label class="block text-gray-700 text-sm font-medium mb-2">Imagen del Producto:</label>
+          <input type="file" (change)="seleccionarImagen($event)" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer"/>
+          <div *ngIf="productoEnEdicion?.imagen" class="mt-4 text-center">
+            <img [src]="'http://localhost:8080' + productoEnEdicion.imagen"
+                 class="w-32 h-32 object-cover rounded-lg border border-gray-200 shadow-sm mx-auto" alt="Vista previa de imagen" />
+            <p class="text-xs text-gray-500 mt-2">Imagen actual</p>
+          </div>
+          <div *ngIf="!productoEnEdicion?.imagen && modoEdicion" class="mt-4 text-center text-gray-500 text-sm">
+            No hay imagen cargada para este producto.
+          </div>
+        </div>
       </div>
 
-      <div class="mt-6 flex justify-end gap-2">
-        <button (click)="cerrarModal()" class="bg-gray-500 text-white px-4 py-2 rounded">Cancelar</button>
-        <button (click)="guardarProducto()" class="bg-blue-600 text-white px-4 py-2 rounded">
-          {{ modoEdicion ? 'Actualizar' : 'Guardar' }}
+      <div class="mt-8 flex justify-end gap-3">
+        <button (click)="cerrarModal()" class="bg-gray-400 hover:bg-gray-500 text-white font-bold px-6 py-2.5 rounded-lg transition duration-200 ease-in-out">Cancelar</button>
+        <button (click)="guardarProducto()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-2.5 rounded-lg transition duration-200 ease-in-out">
+          <i class="fas fa-save mr-2"></i> {{ modoEdicion ? 'Actualizar Producto' : 'Guardar Producto' }}
         </button>
       </div>
     </div>

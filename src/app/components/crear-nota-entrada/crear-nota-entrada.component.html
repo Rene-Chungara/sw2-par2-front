@@ -1,0 +1,82 @@
+<div class="p-6 max-w-5xl mx-auto bg-gray-100 min-h-screen">
+  <h1 class="text-2xl font-bold mb-6">Crear Nota de Entrada</h1>
+
+  <!-- Mensaje de éxito -->
+  <div *ngIf="mensajeExito" class="mb-4 p-3 bg-green-200 text-green-800 rounded">
+    {{ mensajeExito }}
+  </div>
+
+  <!-- Formulario de cabecera de la nota -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+    <input [(ngModel)]="fecha" type="date" class="p-3 border rounded" placeholder="Fecha" />
+    <input [(ngModel)]="lote" type="text" class="p-3 border rounded" placeholder="Lote" />
+
+    <select [(ngModel)]="proveedorId" class="p-3 border rounded">
+      <option value="">Seleccionar proveedor</option>
+      <option *ngFor="let p of proveedores" [value]="p.id">{{ p.nombre }} ({{ p.origen }})</option>
+    </select>
+
+    <input [value]="costoTotal | number:'1.2-2'" disabled class="p-3 border rounded bg-gray-200" placeholder="Costo total" />
+  </div>
+
+  <!-- Agregar detalles -->
+  <div class="bg-white p-4 rounded shadow mb-6">
+    <h2 class="text-lg font-semibold mb-4">Agregar Detalles</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+      <select [(ngModel)]="nuevoDetalle.productoId" class="p-2 border rounded">
+        <option value="">Producto</option>
+        <option *ngFor="let p of productos" [value]="p.id">{{ p.nombre }}</option>
+      </select>
+
+      <input [(ngModel)]="nuevoDetalle.cantidad" type="number" min="1" class="p-2 border rounded" placeholder="Cantidad" />
+      <input [(ngModel)]="nuevoDetalle.costoUnitario" type="number" step="0.01" class="p-2 border rounded" placeholder="Costo Unitario" />
+
+      <button (click)="agregarDetalle()" class="bg-green-600 text-white px-3 py-2 rounded hover:bg-green-700">
+        + Agregar
+      </button>
+    </div>
+
+    <!-- Tabla de detalles -->
+    <table class="min-w-full text-sm border">
+      <thead class="bg-gray-200 text-xs font-semibold text-gray-600">
+        <tr>
+          <th class="p-2">#</th>
+          <th class="p-2">Producto</th>
+          <th class="p-2">Cantidad</th>
+          <th class="p-2">Costo Unitario</th>
+          <th class="p-2">Subtotal</th>
+          <th class="p-2 text-center">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let d of detalles; index as i" class="border-t">
+          <td class="p-2">{{ i + 1 }}</td>
+          <td class="p-2">{{ getNombreProducto(d.productoId) }}</td>
+          <td class="p-2">{{ d.cantidad }}</td>
+          <td class="p-2">{{ d.costoUnitario | number:'1.2-2' }}</td>
+          <td class="p-2">{{ d.cantidad * d.costoUnitario | number:'1.2-2' }}</td>
+          <td class="p-2 text-center">
+            <button (click)="eliminarDetalle(i)" class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 text-xs">
+              Eliminar
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="detalles.length === 0">
+          <td colspan="6" class="text-center text-gray-500 py-4">No se han agregado detalles.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Botón guardar -->
+  <div class="text-right">
+    <button
+      (click)="guardarNotaConDetalles()"
+      class="bg-blue-600 text-white px-6 py-3 rounded font-semibold hover:bg-blue-700"
+      [disabled]="guardando"
+    >
+      {{ guardando ? 'Guardando...' : 'Guardar Nota de Entrada' }}
+    </button>
+  </div>
+</div>

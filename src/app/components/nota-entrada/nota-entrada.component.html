@@ -1,0 +1,67 @@
+<div class="p-6 bg-gray-100 min-h-screen">
+  <h1 class="text-3xl font-bold mb-6">Notas de Entrada</h1>
+
+  <div class="flex justify-end mb-4">
+    <button (click)="abrirModal()" class="bg-green-600 text-white px-4 py-2 rounded shadow hover:bg-green-700">
+      + Nueva Nota
+    </button>
+  </div>
+
+  <div class="overflow-x-auto bg-white shadow rounded border">
+    <table class="min-w-full text-sm">
+      <thead class="bg-gray-200 text-xs uppercase font-semibold text-gray-600">
+        <tr>
+          <th class="p-4">#</th>
+          <th class="p-4">Fecha</th>
+          <th class="p-4">Lote</th>
+          <th class="p-4">Costo Total</th>
+          <th class="p-4">Proveedor</th>
+          <th class="p-4 text-center">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let nota of notas" class="border-t hover:bg-gray-50">
+          <td class="p-4">{{ nota.id }}</td>
+          <td class="p-4">{{ nota.fecha }}</td>
+          <td class="p-4">{{ nota.lote }}</td>
+          <td class="p-4">{{ nota.costoTotal | currency:'BOB' }}</td>
+          <td class="p-4">{{ nota.proveedor?.nombre }}</td>
+          <td class="p-4 text-center space-x-1">
+            <button (click)="verDetalles(nota.id)" class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 text-xs">Ver Detalles</button>
+            <button (click)="abrirModal(nota)" class="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 text-xs">Editar</button>
+            <button (click)="eliminarNota(nota.id)" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 text-xs">Eliminar</button>
+          </td>
+        </tr>
+        <tr *ngIf="notas.length === 0">
+          <td colspan="6" class="p-4 text-center text-gray-500">No hay notas registradas.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Modal -->
+  <div *ngIf="modalAbierto" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-lg shadow-lg w-full max-w-lg p-6">
+      <h2 class="text-xl font-bold mb-4">
+        {{ modoEdicion ? 'Editar Nota' : 'Nueva Nota' }}
+      </h2>
+
+      <div class="grid gap-4 mb-4">
+        <input [(ngModel)]="notaEnEdicion.fecha" type="date" class="p-3 border rounded" />
+        <input [(ngModel)]="notaEnEdicion.lote" placeholder="Lote" class="p-3 border rounded" />
+        <input [(ngModel)]="notaEnEdicion.costoTotal" type="number" step="0.01" placeholder="Costo total" class="p-3 border rounded" />
+        <select [(ngModel)]="notaEnEdicion.proveedorId" class="p-3 border rounded">
+          <option value="">Seleccione proveedor</option>
+          <option *ngFor="let p of proveedores" [value]="p.id">{{ p.nombre }}</option>
+        </select>
+      </div>
+
+      <div class="flex justify-end space-x-3">
+        <button (click)="cerrarModal()" class="bg-gray-400 text-white px-5 py-2 rounded hover:bg-gray-500">Cancelar</button>
+        <button (click)="guardarNota()" class="bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-700">
+          {{ modoEdicion ? 'Actualizar' : 'Guardar' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

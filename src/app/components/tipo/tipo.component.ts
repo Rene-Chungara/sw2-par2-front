@@ -1,97 +1,56 @@
 import { Component, OnInit } from '@angular/core';
+import { TipoService } from '../../services/tipo.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
-import { TipoService, Tipo } from '../../services/tipo.service';
+ 
 
 @Component({
   selector: 'app-tipo',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
-  templateUrl: './tipo.component.html'
+  imports: [FormsModule, CommonModule],
+  templateUrl: './tipo.component.html',
 })
 export class TipoComponent implements OnInit {
-  tipos: Tipo[] = [];
-  nuevoNombre = '';
-  nuevaDescripcion = '';
+  tipos: any[] = [];
+  modalAbierto = false;
+  modoEdicion = false;
+  tipoEnEdicion: any = {};
 
   constructor(private tipoService: TipoService) {}
 
   ngOnInit(): void {
-    this.obtenerTipos();
-  }
-
-  obtenerTipos(): void {
-    this.tipoService.getTipos().subscribe({
-      next: (data) => {
-        this.tipos = data.sort((a, b) => a.id - b.id);
-      },
-      error: (err) => console.error('Error al obtener tipos', err)
+    this.tipoService.listarTipos().subscribe((res: any) => {
+      this.tipos = res?.data?.listarTipos ?? [];
     });
   }
 
-  crearTipo(): void {
-    const nombre = this.nuevoNombre.trim();
-    const descripcion = this.nuevaDescripcion.trim();
-    if (nombre && descripcion) {
-      this.tipoService.createTipo({ nombre, descripcion }).subscribe({
-        next: () => {
-          this.nuevoNombre = '';
-          this.nuevaDescripcion = '';
-          this.obtenerTipos();
-        },
-        error: (err) => console.error('Error al crear tipo', err)
-      });
-    }
-  }
-
-  eliminarTipo(id: number): void {
-    this.tipoService.deleteTipo(id).subscribe({
-      next: () => this.obtenerTipos(),
-      error: (err) => console.error('Error al eliminar tipo', err)
-    });
-  }
-
-  // al final de la clase TipoComponent
-  modalAbierto = false;
-  modoEdicion = false;
-  tipoEnEdicion: Tipo | null = null;
-
-  abrirModal(tipo?: Tipo): void {
+  abrirModal(tipo: any = null) {
     this.modalAbierto = true;
-    if (tipo) {
-      this.modoEdicion = true;
-      this.tipoEnEdicion = { ...tipo };
-    } else {
-      this.modoEdicion = false;
-      this.tipoEnEdicion = { id: 0, nombre: '', descripcion: '' };
-    }
+    this.modoEdicion = !!tipo;
+    this.tipoEnEdicion = tipo
+      ? JSON.parse(JSON.stringify(tipo))
+      : { nombre: '', descripcion: '' };
   }
 
-  cerrarModal(): void {
+  cerrarModal() {
     this.modalAbierto = false;
-    this.tipoEnEdicion = null;
   }
 
-  guardarTipo(): void {
-    if (!this.tipoEnEdicion) return;
-
-    const data = {
-      nombre: this.tipoEnEdicion.nombre.trim(),
-      descripcion: this.tipoEnEdicion.descripcion.trim()
-    };
-
-    if (this.modoEdicion && this.tipoEnEdicion.id) {
-      this.tipoService.updateTipo(this.tipoEnEdicion.id, data).subscribe(() => {
-        this.obtenerTipos();
+  guardarTipo() {
+    if (this.modoEdicion) {
+      this.tipoService.actualizarTipo(this.tipoEnEdicion).subscribe(() => {
         this.cerrarModal();
       });
     } else {
-      this.tipoService.createTipo(data).subscribe(() => {
-        this.obtenerTipos();
-        this.cerrarModal();
-      });
+      this.tipoService
+        .crearTipo(this.tipoEnEdicion.nombre, this.tipoEnEdicion.descripcion)
+        .subscribe(() => {
+          this.cerrarModal();
+        });
     }
   }
 
+  eliminarTipo(id: number) {
+    this.tipoService.eliminarTipo(id).subscribe();
+  }
 }

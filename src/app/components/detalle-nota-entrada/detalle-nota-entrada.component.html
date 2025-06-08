@@ -1,0 +1,72 @@
+<div class="p-6 bg-gray-100 min-h-screen">
+  <h1 class="text-3xl font-bold mb-6">Detalle de Notas de Entrada</h1>
+
+  <div class="flex justify-end mb-4">
+    <button (click)="abrirModal()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+      + Nuevo Detalle
+    </button>
+  </div>
+
+  <div class="overflow-x-auto bg-white shadow rounded border">
+    <table class="min-w-full text-sm">
+      <thead class="bg-gray-200 text-xs uppercase font-semibold text-gray-600">
+        <tr>
+          <th class="p-4">#</th>
+          <th class="p-4">Producto</th>
+          <th class="p-4">Cantidad</th>
+          <th class="p-4">Costo Unitario</th>
+          <th class="p-4">Nota Entrada</th>
+          <th class="p-4 text-center">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let d of detalles" class="border-t hover:bg-gray-50">
+          <td class="p-4">{{ d.id }}</td>
+          <td class="p-4">{{ d.producto?.nombre }}</td>
+          <td class="p-4">{{ d.cantidad }}</td>
+          <td class="p-4">{{ d.costoUnitario | currency:'BOB' }}</td>
+          <td class="p-4">{{ d.notaEntrada?.lote }}</td>
+          <td class="p-4 text-center space-x-2">
+            <button (click)="abrirModal(d)" class="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 text-xs">Editar</button>
+            <button (click)="eliminarDetalle(d.id)" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 text-xs">Eliminar</button>
+          </td>
+        </tr>
+        <tr *ngIf="detalles.length === 0">
+          <td colspan="6" class="text-center text-gray-500 py-4">No hay detalles registrados.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Modal -->
+  <div *ngIf="modalAbierto" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-lg shadow-lg w-full max-w-xl p-6">
+      <h2 class="text-xl font-bold mb-4">
+        {{ modoEdicion ? 'Editar Detalle' : 'Nuevo Detalle' }}
+      </h2>
+
+      <div class="grid gap-4 mb-4">
+        <select [(ngModel)]="detalleEnEdicion.productoId" class="p-3 border rounded">
+          <option value="">Seleccionar producto</option>
+          <option *ngFor="let p of productos" [value]="p.id">{{ p.nombre }}</option>
+        </select>
+
+        <input [(ngModel)]="detalleEnEdicion.cantidad" type="number" placeholder="Cantidad" class="p-3 border rounded" />
+
+        <input [(ngModel)]="detalleEnEdicion.costoUnitario" type="number" step="0.01" placeholder="Costo Unitario" class="p-3 border rounded" />
+
+        <select [(ngModel)]="detalleEnEdicion.notaEntradaId" class="p-3 border rounded">
+          <option value="">Seleccionar nota de entrada</option>
+          <option *ngFor="let n of notas" [value]="n.id">{{ n.lote }} - {{ n.fecha }}</option>
+        </select>
+      </div>
+
+      <div class="flex justify-end gap-3">
+        <button (click)="cerrarModal()" class="bg-gray-400 text-white px-5 py-2 rounded hover:bg-gray-500">Cancelar</button>
+        <button (click)="guardarDetalle()" class="bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-700">
+          {{ modoEdicion ? 'Actualizar' : 'Guardar' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

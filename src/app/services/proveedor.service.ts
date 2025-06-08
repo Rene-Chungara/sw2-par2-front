@@ -1,43 +1,115 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Apollo } from 'apollo-angular';
+import gql from 'graphql-tag';
 
-const API_URL = 'http://localhost:8080/api/proveedores';
+const LISTAR_PROVEEDORES_QUERY = gql`
+  query {
+    listarProveedores {
+      id
+      nombre
+      origen
+    }
+  }
+`;
 
-export interface Proveedor {
-  id: number;
-  nombre: string;
-  origen: string;
-}
-
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class ProveedorService {
-  constructor(private http: HttpClient) {}
+  constructor(private apollo: Apollo) {}
 
-  getProveedores(): Observable<Proveedor[]> {
-    return this.http.get<Proveedor[]>(API_URL);
+  listarProveedores() {
+    return this.apollo.watchQuery<any>({
+      query: LISTAR_PROVEEDORES_QUERY,
+    }).valueChanges;
   }
 
-  createProveedor(data: Partial<Proveedor>): Observable<Proveedor> {
-    return this.http.post<Proveedor>(API_URL, data);
+  obtenerProveedores() {
+    return this.apollo.watchQuery<any>({
+      query: LISTAR_PROVEEDORES_QUERY,
+    }).valueChanges;
+  }
+  
+  crearProveedor(nombre: string, origen: string) {
+    return this.apollo.mutate({
+      mutation: gql`
+        mutation ($nombre: String!, $origen: String!) {
+          crearProveedor(nombre: $nombre, origen: $origen) {
+            id
+            nombre
+            origen
+          }
+        }
+      `,
+      variables: { nombre, origen },
+      update: (cache, { data }) => {
+        const nuevo = (data as any)?.crearProveedor;
+        if (!nuevo) return;
+        const existing: any = cache.readQuery({ query: LISTAR_PROVEEDORES_QUERY });
+        if (existing?.listarProveedores) {
+          cache.writeQuery({
+            query: LISTAR_PROVEEDORES_QUERY,
+            data: {
+              listarProveedores: [...existing.listarProveedores, nuevo],
+            },
+          });
+        }
+      },
+    });
   }
 
-  updateProveedor(id: number, data: Partial<Proveedor>): Observable<Proveedor> {
-    return this.http.put<Proveedor>(`${API_URL}/${id}`, data);
+  actualizarProveedor(proveedor: any) {
+    return this.apollo.mutate({
+      mutation: gql`
+        mutation ($id: ID!, $nombre: String!, $origen: String!) {
+          actualizarProveedor(id: $id, nombre: $nombre, origen: $origen) {
+            id
+            nombre
+            origen
+          }
+        }
+      `,
+      variables: {
+        id: String(proveedor.id),
+        nombre: proveedor.nombre,
+        origen: proveedor.origen,
+      },
+      update: (cache, { data }) => {
+        const actualizado = (data as any)?.actualizarProveedor;
+        if (!actualizado) return;
+        const existing: any = cache.readQuery({ query: LISTAR_PROVEEDORES_QUERY });
+        if (existing?.listarProveedores) {
+          const actualizados = existing.listarProveedores.map((p: any) =>
+            p.id === actualizado.id ? actualizado : p
+          );
+          cache.writeQuery({
+            query: LISTAR_PROVEEDORES_QUERY,
+            data: {
+              listarProveedores: actualizados,
+            },
+          });
+        }
+      },
+    });
   }
 
-  deleteProveedor(id: number): Observable<void> {
-    return this.http.delete<void>(`${API_URL}/${id}`);
+  eliminarProveedor(id: number) {
+    return this.apollo.mutate({
+      mutation: gql`
+        mutation ($id: ID!) {
+          eliminarProveedor(id: $id)
+        }
+      `,
+      variables: { id: String(id) },
+      update: (cache) => {
+        const existing: any = cache.readQuery({ query: LISTAR_PROVEEDORES_QUERY });
+        if (existing?.listarProveedores) {
+          cache.writeQuery({
+            query: LISTAR_PROVEEDORES_QUERY,
+            data: {
+              listarProveedores: existing.listarProveedores.filter((p: any) => p.id !== String(id)),
+            },
+          });
+        }
+      },
+    });
   }
-
-  buscarPorNombre(nombre: string): Observable<Proveedor[]> {
-    return this.http.get<Proveedor[]>(`${API_URL}/buscar/nombre/${nombre}`);
-  }
-
-  buscarPorOrigen(origen: string): Observable<Proveedor[]> {
-    return this.http.get<Proveedor[]>(`${API_URL}/buscar/origen/${origen}`);
-  }
-
 }

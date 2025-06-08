@@ -1,49 +1,43 @@
+// permiso.component.ts
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { PermisoService } from '../../services/permiso.service';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
-import { PermisoService, Permiso } from '../../services/permiso.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-permiso',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
-  templateUrl: './permiso.component.html'
+  imports: [FormsModule, CommonModule],
+  templateUrl: './permiso.component.html',
 })
 export class PermisoComponent implements OnInit {
-  permisos: Permiso[] = [];
+  permisos: any[] = [];
   nuevoPermiso: string = '';
 
   constructor(private permisoService: PermisoService) {}
 
   ngOnInit(): void {
-    this.obtenerPermisos();
+    this.cargarPermisos();
   }
 
-  obtenerPermisos(): void {
-    this.permisoService.getPermisos().subscribe({
-      next: (data) => (this.permisos = data),
-      error: (err) => console.error('Error al obtener permisos', err)
+  cargarPermisos() {
+    this.permisoService.obtenerPermisos().subscribe((result: any) => {
+      this.permisos = result.data.listarPermisos;
     });
   }
 
-  crearPermiso(): void {
-    const nombre = this.nuevoPermiso.trim();
-    if (nombre) {
-      this.permisoService.createPermiso(nombre).subscribe({
-        next: () => {
-          this.nuevoPermiso = '';
-          this.obtenerPermisos();
-        },
-        error: (err) => console.error('Error al crear permiso', err)
-      });
-    }
+  crearPermiso() {
+    if (!this.nuevoPermiso.trim()) return;
+
+    this.permisoService.crearPermiso(this.nuevoPermiso).subscribe(() => {
+      this.nuevoPermiso = '';
+      this.cargarPermisos();
+    });
   }
 
-  eliminarPermiso(id: number): void {
-    this.permisoService.deletePermiso(id).subscribe({
-      next: () => this.obtenerPermisos(),
-      error: (err) => console.error('Error al eliminar permiso', err)
+  eliminarPermiso(id: number) {
+    this.permisoService.eliminarPermiso(id).subscribe(() => {
+      this.cargarPermisos();
     });
   }
 }

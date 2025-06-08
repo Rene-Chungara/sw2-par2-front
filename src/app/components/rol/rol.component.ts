@@ -1,59 +1,43 @@
+// rol.component.ts
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { RolService } from '../../services/rol.service';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
-import { RolService, Rol } from '../../services/rol.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-rol',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
-  templateUrl: './rol.component.html'
+  imports: [FormsModule, CommonModule],
+  templateUrl: './rol.component.html',
 })
 export class RolComponent implements OnInit {
-  roles: Rol[] = [];
+  roles: any[] = [];
   nuevoRol: string = '';
 
   constructor(private rolService: RolService) {}
 
   ngOnInit(): void {
-    this.obtenerRoles();
+    this.cargarRoles();
   }
 
-  obtenerRoles(): void {
-    this.rolService.getRoles().subscribe({
-      next: (data) => {
-        this.roles = data;
-      },
-      error: (err) => {
-        console.error('Error al obtener roles', err);
-      }
+  cargarRoles() {
+    this.rolService.obtenerRoles().subscribe((result: any) => {
+      this.roles = result.data.listarRoles;
     });
   }
 
-  crearRol(): void {
-    const nombre = this.nuevoRol.trim();
-    if (nombre) {
-      this.rolService.createRol(nombre).subscribe({
-        next: () => {
-          this.nuevoRol = '';
-          this.obtenerRoles();
-        },
-        error: (err) => {
-          console.error('Error al crear rol', err);
-        }
-      });
-    }
+  crearRol() {
+    if (!this.nuevoRol.trim()) return;
+
+    this.rolService.crearRol(this.nuevoRol).subscribe(() => {
+      this.nuevoRol = '';
+      this.cargarRoles();
+    });
   }
 
-  eliminarRol(id: number): void {
-    this.rolService.deleteRol(id).subscribe({
-      next: () => {
-        this.obtenerRoles();
-      },
-      error: (err) => {
-        console.error('Error al eliminar rol', err);
-      }
+  eliminarRol(id: number) {
+    this.rolService.eliminarRol(id).subscribe(() => {
+      this.cargarRoles();
     });
   }
 }

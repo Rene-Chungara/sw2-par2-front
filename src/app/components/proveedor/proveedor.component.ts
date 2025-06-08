@@ -1,101 +1,56 @@
 import { Component, OnInit } from '@angular/core';
+import { ProveedorService } from '../../services/proveedor.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
-import { ProveedorService, Proveedor } from '../../services/proveedor.service';
 
 @Component({
   selector: 'app-proveedor',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
-  templateUrl: './proveedor.component.html'
+  imports: [FormsModule, CommonModule],
+  templateUrl: './proveedor.component.html',
 })
 export class ProveedorComponent implements OnInit {
-  proveedores: Proveedor[] = [];
+  proveedores: any[] = [];
   modalAbierto = false;
   modoEdicion = false;
-  proveedorEnEdicion: Proveedor | null = null;
+  proveedorEnEdicion: any = {};
 
   constructor(private proveedorService: ProveedorService) {}
 
   ngOnInit(): void {
-    this.obtenerProveedores();
-  }
-
-  obtenerProveedores(): void {
-    this.proveedorService.getProveedores().subscribe({
-      next: (data) => this.proveedores = data.sort((a, b) => a.id - b.id),
-      error: (err) => console.error('Error al obtener proveedores', err)
+    this.proveedorService.listarProveedores().subscribe((res: any) => {
+      this.proveedores = res.data.listarProveedores;
     });
   }
 
-  abrirModal(proveedor?: Proveedor): void {
+  abrirModal(proveedor: any = null) {
     this.modalAbierto = true;
-    if (proveedor) {
-      this.modoEdicion = true;
-      this.proveedorEnEdicion = { ...proveedor };
-    } else {
-      this.modoEdicion = false;
-      this.proveedorEnEdicion = { id: 0, nombre: '', origen: '' };
-    }
+    this.modoEdicion = !!proveedor;
+    this.proveedorEnEdicion = proveedor
+      ? JSON.parse(JSON.stringify(proveedor))
+      : { nombre: '', origen: '' };
   }
 
-  cerrarModal(): void {
+  cerrarModal() {
     this.modalAbierto = false;
-    this.proveedorEnEdicion = null;
   }
 
-  guardarProveedor(): void {
-    if (!this.proveedorEnEdicion) return;
-
-    const data = {
-      nombre: this.proveedorEnEdicion.nombre.trim(),
-      origen: this.proveedorEnEdicion.origen.trim()
-    };
-
-    if (this.modoEdicion && this.proveedorEnEdicion.id) {
-      this.proveedorService.updateProveedor(this.proveedorEnEdicion.id, data).subscribe(() => {
-        this.obtenerProveedores();
+  guardarProveedor() {
+    if (this.modoEdicion) {
+      this.proveedorService.actualizarProveedor(this.proveedorEnEdicion).subscribe(() => {
         this.cerrarModal();
       });
     } else {
-      this.proveedorService.createProveedor(data).subscribe(() => {
-        this.obtenerProveedores();
+      this.proveedorService.crearProveedor(
+        this.proveedorEnEdicion.nombre,
+        this.proveedorEnEdicion.origen
+      ).subscribe(() => {
         this.cerrarModal();
       });
     }
   }
 
-  eliminarProveedor(id: number): void {
-    this.proveedorService.deleteProveedor(id).subscribe(() => {
-      this.obtenerProveedores();
-    });
+  eliminarProveedor(id: number) {
+    this.proveedorService.eliminarProveedor(id).subscribe();
   }
-
-  // ----------FILTRO ---------------
-  filtroNombre = '';
-  filtroOrigen = '';
-
-  aplicarFiltros(): void {
-    if (this.filtroNombre.trim()) {
-      this.proveedorService.buscarPorNombre(this.filtroNombre.trim()).subscribe({
-        next: (data) => this.proveedores = data.sort((a, b) => a.id - b.id),
-        error: (err) => console.error('Error al buscar por nombre', err)
-      });
-    } else if (this.filtroOrigen.trim()) {
-      this.proveedorService.buscarPorOrigen(this.filtroOrigen.trim()).subscribe({
-        next: (data) => this.proveedores = data.sort((a, b) => a.id - b.id),
-        error: (err) => console.error('Error al buscar por origen', err)
-      });
-    } else {
-      this.obtenerProveedores();
-    }
-  }
-
-  limpiarFiltros(): void {
-    this.filtroNombre = '';
-    this.filtroOrigen = '';
-    this.obtenerProveedores();
-  }
-  
 }
