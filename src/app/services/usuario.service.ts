@@ -177,4 +177,10 @@ export class UsuarioService {
       },
     });
   }
+
+  obtenerUsuarios() {
+    return this.apollo.query({
+      query: LISTAR_USUARIOS_QUERY,
+    });
+  }
 }

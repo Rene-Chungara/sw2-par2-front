@@ -1,7 +1,7 @@
+// detalle-nota-entrada.component.ts
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { DetalleNotaEntradaService } from '../../services/detalle-nota-entrada.service';
-import { ProductoService } from '../../services/producto.service';
-import { NotaEntradaService } from '../../services/nota-entrada.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -13,63 +13,34 @@ import { FormsModule } from '@angular/forms';
 })
 export class DetalleNotaEntradaComponent implements OnInit {
   detalles: any[] = [];
-  productos: any[] = [];
-  notas: any[] = [];
-
-  modalAbierto = false;
-  modoEdicion = false;
-  detalleEnEdicion: any = {};
+  loading = false;
+  error = '';
+  notaEntradaId: string | null = null;
 
   constructor(
-    private detalleService: DetalleNotaEntradaService,
-    private productoService: ProductoService,
-    private notaService: NotaEntradaService
+    private route: ActivatedRoute,
+    private router: Router,
+    private detalleService: DetalleNotaEntradaService
   ) {}
 
   ngOnInit(): void {
-    this.detalleService.listarDetalles().subscribe((res: any) => {
-      this.detalles = res.data.listarDetallesNotaEntrada;
-    });
-
-    this.productoService.listarProductos().subscribe((res: any) => {
-      this.productos = res.data.listarProductos;
-    });
-
-    this.notaService.listarNotasEntrada().subscribe((res: any) => {
-      this.notas = res.data.listarNotasEntrada;
-    });
-  }
-
-  abrirModal(detalle: any = null) {
-    this.modalAbierto = true;
-    this.modoEdicion = !!detalle;
-    this.detalleEnEdicion = detalle
-      ? {
-          ...detalle,
-          productoId: detalle.producto.id,
-          notaEntradaId: detalle.notaEntrada.id,
-        }
-      : {
-          productoId: '',
-          notaEntradaId: '',
-          cantidad: 1,
-          costoUnitario: 0,
-        };
-  }
-
-  cerrarModal() {
-    this.modalAbierto = false;
-  }
-
-  guardarDetalle() {
-    if (this.modoEdicion) {
-      this.detalleService.actualizarDetalle(this.detalleEnEdicion).subscribe(() => this.cerrarModal());
-    } else {
-      this.detalleService.crearDetalle(this.detalleEnEdicion).subscribe(() => this.cerrarModal());
+    this.notaEntradaId = this.route.snapshot.paramMap.get('id');
+    if (this.notaEntradaId) {
+      this.loading = true;
+      this.detalleService.listarDetallesPorNota(parseInt(this.notaEntradaId)).subscribe({
+        next: (res: any) => {
+          this.detalles = res.data.listarDetallesPorNota;
+          this.loading = false;
+        },
+        error: (err) => {
+          this.error = 'Error al cargar los detalles de la nota de entrada';
+          this.loading = false;
+        },
+      });
     }
   }
 
-  eliminarDetalle(id: number) {
-    this.detalleService.eliminarDetalle(id).subscribe();
+  volver() {
+    this.router.navigate(['/notas-entradas']);
   }
 }

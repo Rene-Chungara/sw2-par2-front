@@ -1,9 +1,10 @@
 <div class="p-6 bg-gray-100 min-h-screen">
   <h1 class="text-3xl font-bold mb-6">Notas de Entrada</h1>
 
-  <div class="flex justify-end mb-4">
-    <button (click)="abrirModal()" class="bg-green-600 text-white px-4 py-2 rounded shadow hover:bg-green-700">
-      + Nueva Nota
+  <div class="mt-6 mb-6 text-right">
+    <button (click)="creardetalle()"
+        class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-900">
+        + Crear
     </button>
   </div>
 
@@ -28,7 +29,6 @@
           <td class="p-4">{{ nota.proveedor?.nombre }}</td>
           <td class="p-4 text-center space-x-1">
             <button (click)="verDetalles(nota.id)" class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 text-xs">Ver Detalles</button>
-            <button (click)="abrirModal(nota)" class="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 text-xs">Editar</button>
             <button (click)="eliminarNota(nota.id)" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 text-xs">Eliminar</button>
           </td>
         </tr>

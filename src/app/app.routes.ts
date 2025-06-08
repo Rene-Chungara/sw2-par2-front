@@ -9,6 +9,9 @@ import { UsuarioComponent } from './components/usuario/usuario.component';
 import { NotaEntradaComponent } from './components/nota-entrada/nota-entrada.component';
 import { DetalleNotaEntradaComponent } from './components/detalle-nota-entrada/detalle-nota-entrada.component';
 import { CrearNotaEntradaComponent } from './components/crear-nota-entrada/crear-nota-entrada.component';
+import { VentaComponent } from './components/venta/venta.component';
+import { CrearVentaComponent } from './components/crear-venta/crear-venta.component';
+import { VentaDetalleComponent } from './components/venta-detalle/venta-detalle.component';
 
 export const routes: Routes = [
     { path: 'roles', component: RolComponent },
@@ -19,8 +22,12 @@ export const routes: Routes = [
     { path: 'rolpermisos', component: RolPermisoComponent },
     { path: 'usuarios', component: UsuarioComponent },
     { path: 'notas-entradas', component: NotaEntradaComponent },
-    { path: 'detalle-notas-entradas', component: DetalleNotaEntradaComponent },
+    { path: 'detalle-nota-entrada/:id', component: DetalleNotaEntradaComponent },
     { path: 'crear-notas-entradas', component: CrearNotaEntradaComponent },
+    { path: 'ventas', component: VentaComponent },
+    { path: 'crear-venta', component: CrearVentaComponent },
+    { path: 'detalle-venta/:id', component: VentaDetalleComponent  },
+
 
     { path: '', redirectTo: '/', pathMatch: 'full' },
     { path: '**', redirectTo: '' },

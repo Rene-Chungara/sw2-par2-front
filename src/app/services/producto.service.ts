@@ -54,6 +54,9 @@ export class ProductoService {
             id
             nombre
             imagen
+            stock
+            precioVenta
+            descripcion
             tipo { id nombre }
           }
         }
@@ -62,6 +65,19 @@ export class ProductoService {
         ...producto,
         tipoId: String(producto.tipoId),
       },
+      update: (cache, { data }) => {
+        const nuevo = (data as any)?.crearProducto;
+        if (!nuevo) return;
+        const existente: any = cache.readQuery({ query: LISTAR_PRODUCTOS_QUERY });
+        if (existente?.listarProductos) {
+          cache.writeQuery({
+            query: LISTAR_PRODUCTOS_QUERY,
+            data: {
+              listarProductos: [...existente.listarProductos, nuevo],
+            },
+          });
+        }
+      }
     });
   }
 
@@ -89,6 +105,9 @@ export class ProductoService {
             id
             nombre
             imagen
+            stock
+            precioVenta
+            descripcion
             tipo { id nombre }
           }
         }
@@ -98,6 +117,22 @@ export class ProductoService {
         tipoId: String(producto.tipoId),
         id: String(producto.id),
       },
+      update: (cache, { data }) => {
+        const actualizado = (data as any)?.actualizarProducto;
+        if (!actualizado) return;
+        const existente: any = cache.readQuery({ query: LISTAR_PRODUCTOS_QUERY });
+        if (existente?.listarProductos) {
+          const actualizadoLista = existente.listarProductos.map((p: any) =>
+            p.id === actualizado.id ? actualizado : p
+          );
+          cache.writeQuery({
+            query: LISTAR_PRODUCTOS_QUERY,
+            data: {
+              listarProductos: actualizadoLista,
+            },
+          });
+        }
+      }
     });
   }
 
@@ -109,6 +144,18 @@ export class ProductoService {
         }
       `,
       variables: { id: String(id) },
+      update: (cache) => {
+        const existente: any = cache.readQuery({ query: LISTAR_PRODUCTOS_QUERY });
+        if (existente?.listarProductos) {
+          const nuevaLista = existente.listarProductos.filter((p: any) => p.id !== String(id));
+          cache.writeQuery({
+            query: LISTAR_PRODUCTOS_QUERY,
+            data: {
+              listarProductos: nuevaLista,
+            },
+          });
+        }
+      }
     });
   }
 

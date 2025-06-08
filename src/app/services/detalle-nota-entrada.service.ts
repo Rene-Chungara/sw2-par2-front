@@ -209,4 +209,28 @@ export class DetalleNotaEntradaService {
       fetchPolicy: 'network-only'
     });
   }
+
+  obtenerNotaEntrada(notaEntradaId: number) {
+    return this.apollo.query<any>({
+      query: gql`
+        query ($notaEntradaId: ID!) {
+          listarDetallesPorNota(notaEntradaId: $notaEntradaId) {
+            id
+            cantidad
+            costoUnitario
+            producto {
+              id
+              nombre
+            }
+            notaEntrada {
+              id
+              lote
+            }
+          }
+        }
+      `,
+      variables: { notaEntradaId },
+      fetchPolicy: 'network-only'
+    });
+  }
 }

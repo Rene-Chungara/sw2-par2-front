@@ -4,6 +4,7 @@ import { ProveedorService } from '../../services/proveedor.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DetalleNotaEntradaService } from '../../services/detalle-nota-entrada.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-nota-entrada',
@@ -25,7 +26,8 @@ export class NotaEntradaComponent implements OnInit {
   constructor(
     private notaService: NotaEntradaService,
     private proveedorService: ProveedorService,
-    private detalleService: DetalleNotaEntradaService
+    private detalleService: DetalleNotaEntradaService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -62,14 +64,11 @@ export class NotaEntradaComponent implements OnInit {
     this.notaService.eliminarNotaEntrada(id).subscribe();
   }
 
-  verDetalles(notaId: number) {
-    this.notaSeleccionadaId = notaId;
-    this.mostrarDetalles = true;
-
-    // Usamos servicio de detalles (asumimos que ya está creado)
-    this.detalleService.listarDetallesPorNota(notaId).subscribe((res: any) => {
-      this.detallesDeNota = res.data.listarDetallesPorNota;
-    });
+  verDetalles(id: number) {
+    this.router.navigate(['/detalle-nota-entrada', id]);
   }
 
+  creardetalle(): void {
+    this.router.navigate(['/crear-notas-entradas']);
+  }
 }

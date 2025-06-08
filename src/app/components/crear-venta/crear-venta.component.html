@@ -1,0 +1,82 @@
+<div class="p-6 max-w-4xl mx-auto">
+  <h2 class="text-2xl font-bold mb-4">Registrar Nueva Venta</h2>
+
+  <form (ngSubmit)="crearVenta()" class="space-y-4">
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <label class="block text-sm font-medium">Usuario</label>
+        <select [(ngModel)]="usuarioId" name="usuarioId" required class="w-full border rounded p-2">
+          <option value="" disabled selected>Seleccione un usuario</option>
+          <option *ngFor="let u of usuarios" [value]="u.id">{{ u.nombre }}</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium">Fecha</label>
+        <input type="date" [(ngModel)]="fechaVenta" name="fechaVenta" class="w-full border rounded p-2" required />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium">Canal de Venta</label>
+        <input [(ngModel)]="canalVenta" name="canalVenta" class="w-full border rounded p-2" required />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium">Estado</label>
+        <select [(ngModel)]="estado" name="estado" class="w-full border rounded p-2">
+          <option value="PENDIENTE">PENDIENTE</option>
+          <option value="COMPLETADA">COMPLETADA</option>
+        </select>
+      </div>
+    </div>
+
+    <h3 class="text-lg font-semibold mt-6">Detalles de Venta</h3>
+    <table class="min-w-full border mt-2">
+      <thead>
+        <tr class="bg-gray-100">
+          <th class="p-2 border">Producto</th>
+          <th class="p-2 border">Cantidad</th>
+          <th class="p-2 border">Precio Unitario</th>
+          <th class="p-2 border text-center">Acción</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let d of detalles; let i = index">
+          <td class="p-2 border">
+            <select [(ngModel)]="d.productoId" name="producto{{i}}" class="w-full border p-1 rounded" required>
+              <option value="" disabled>Seleccione</option>
+              <option *ngFor="let p of productos" [value]="p.id">{{ p.nombre }}</option>
+            </select>
+          </td>
+          <td class="p-2 border">
+            <input type="number" [(ngModel)]="d.cantidad" name="cantidad{{i}}" min="1" class="w-full border p-1 rounded" required />
+          </td>
+          <td class="p-2 border">
+            <input type="number" [(ngModel)]="d.precioUnitario" name="precio{{i}}" min="0" step="0.01" class="w-full border p-1 rounded" required />
+          </td>
+          <td class="p-2 border text-center">
+            <button type="button" (click)="eliminarDetalle(i)" class="text-red-600 hover:underline">Eliminar</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="mt-4">
+      <button type="button" (click)="agregarDetalle()" class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">
+        Agregar Detalle
+      </button>
+    </div>
+
+    <div class="mt-6 text-right">
+      <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+        Guardar Venta
+      </button>
+    </div>
+    <div class="mt-6 text-right">
+      <button (click)="ventas()"
+                class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-900">
+                Volver al listado
+        </button>
+    </div>
+  </form>
+</div>
