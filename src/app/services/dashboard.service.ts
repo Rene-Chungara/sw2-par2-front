@@ -1,3 +1,4 @@
+//dashboard.service.ts
 import { Injectable } from '@angular/core';
 import { Apollo, gql } from 'apollo-angular';
 import { Observable, map, catchError, of } from 'rxjs';
@@ -95,21 +96,22 @@ export class DashboardService {
   }
 
   getAniosMesesDisponiblesVentas(): Observable<{ anio: number, mes: number }[]> {
-    return this.apollo.watchQuery<any>({
-      query: gql`
-        query {
-          aniosMesesDisponiblesVentas {
-            anio
-            mes
-          }
+  return this.apollo.watchQuery<any>({
+    query: gql`
+      query {
+        anios_meses_disponibles_ventas {
+          anio
+          mes
         }
-      `
-    }).valueChanges.pipe(
-      map(result => result.data?.aniosMesesDisponiblesVentas ?? []),
-      catchError(err => {
-        console.error('❌ Error en getAniosMesesDisponiblesVentas:', err);
-        return of([]);
-      })
-    );
-  }
+      }
+    `
+  }).valueChanges.pipe(
+    map(result => result.data?.anios_meses_disponibles_ventas ?? []),
+    catchError(err => {
+      console.error('❌ Error en getAniosMesesDisponiblesVentas:', err);
+      return of([]);
+    })
+  );
+}
+
 }

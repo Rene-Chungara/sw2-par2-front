@@ -1,35 +1,34 @@
 <mat-toolbar color="primary" class="toolbar">
   <span class="toolbar-title">Dashboard BI - Textilería</span>
-  <span class="toolbar-date">{{ currentDateTime | date:'medium' }}</span>
 </mat-toolbar>
 
-<div class="dashboard-container">
-
-  <div class="filters">
-    <mat-form-field appearance="outline">
+<div class="dashboard-container" style="padding: 20px;">
+  <!-- Filtros -->
+  <div class="filters" style="display: flex; gap: 20px; margin-bottom: 24px;">
+    <mat-form-field appearance="outline" style="min-width: 150px;">
       <mat-label>Año</mat-label>
       <mat-select [(value)]="filtroAnio" (selectionChange)="onFiltroChange()">
         <mat-option *ngFor="let anio of aniosDisponibles" [value]="anio">{{ anio }}</mat-option>
       </mat-select>
     </mat-form-field>
 
-    <mat-form-field appearance="outline">
+    <mat-form-field appearance="outline" style="min-width: 150px;">
       <mat-label>Mes</mat-label>
       <mat-select [(value)]="filtroMes" (selectionChange)="onFiltroChange()">
-        <mat-option *ngFor="let mes of mesesDisponibles" [value]="mes">{{ mes }}</mat-option>
+        <mat-option *ngFor="let mes of mesesDisponibles" [value]="mes">
+          {{ getMonthName(mes) }}
+        </mat-option>
       </mat-select>
     </mat-form-field>
-
-    <h3 class="data-period-display">
-      Datos para: {{ getMonthName(filtroMes) }} {{ filtroAnio }}
-    </h3>
   </div>
 
+  <!-- KPIs -->
   <mat-grid-list cols="2" rowHeight="150px" gutterSize="24px" class="kpi-grid">
     <mat-grid-tile>
       <mat-card class="kpi-card">
         <mat-card-header>
-          <mat-icon color="primary">insights</mat-icon> <mat-card-title class="kpi-title">Eficiencia de Producción</mat-card-title>
+          <mat-icon color="primary">precision_manufacturing</mat-icon>
+          <mat-card-title class="kpi-title">Eficiencia de Producción</mat-card-title>
         </mat-card-header>
         <mat-card-content>
           <h2 class="kpi-value">{{ eficiencia }}%</h2>
@@ -40,7 +39,8 @@
     <mat-grid-tile>
       <mat-card class="kpi-card">
         <mat-card-header>
-          <mat-icon color="primary">trending_up</mat-icon> <mat-card-title class="kpi-title">Margen Bruto</mat-card-title>
+          <mat-icon color="primary">trending_up</mat-icon>
+          <mat-card-title class="kpi-title">Margen Bruto</mat-card-title>
         </mat-card-header>
         <mat-card-content>
           <h2 [ngClass]="getMargenColorClass()" class="kpi-value">{{ margen }}%</h2>
@@ -49,13 +49,13 @@
     </mat-grid-tile>
   </mat-grid-list>
 
-  <div class="chart-container">
+  <!-- Gráfico -->
+  <div class="chart-container" style="margin-top: 30px;">
     <h3 class="chart-title">Ventas por Categoría</h3>
     <canvas baseChart
-            [data]="ventasChartData"
+            [data]="ventasChartData"         
             [options]="chartOptions"
             [type]="chartType">
     </canvas>
   </div>
-
 </div>

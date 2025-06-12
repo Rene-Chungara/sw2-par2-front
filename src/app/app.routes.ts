@@ -13,12 +13,14 @@ import { VentaComponent } from './components/venta/venta.component';
 import { CrearVentaComponent } from './components/crear-venta/crear-venta.component';
 import { VentaDetalleComponent } from './components/venta-detalle/venta-detalle.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { MlTesterComponent } from './components/ml-tester/ml-tester.component';
 
 export const routes: Routes = [
     { path: 'dashboard', component: DashboardComponent },
     { path: 'roles', component: RolComponent },
     { path: 'permisos', component: PermisoComponent },
     { path: 'tipos', component: TipoComponent },
+    { path: 'machine', component: MlTesterComponent },
     { path: 'proveedores', component: ProveedorComponent },
     { path: 'productos', component: ProductoComponent },
     { path: 'rolpermisos', component: RolPermisoComponent },
