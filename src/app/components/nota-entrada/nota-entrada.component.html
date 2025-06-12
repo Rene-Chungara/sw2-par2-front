@@ -2,9 +2,8 @@
   <h1 class="text-3xl font-bold mb-6">Notas de Entrada</h1>
 
   <div class="mt-6 mb-6 text-right">
-    <button (click)="creardetalle()"
-        class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-900">
-        + Crear
+    <button (click)="creardetalle()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-900">
+      + Crear
     </button>
   </div>
 
@@ -30,6 +29,7 @@
           <td class="p-4 text-center space-x-1">
             <button (click)="verDetalles(nota.id)" class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 text-xs">Ver Detalles</button>
             <button (click)="eliminarNota(nota.id)" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 text-xs">Eliminar</button>
+            <button (click)="abrirQRModal(nota.lote)" class="bg-gray-700 text-white px-3 py-1 rounded hover:bg-gray-900 text-xs">Ver QR</button>
           </td>
         </tr>
         <tr *ngIf="notas.length === 0">
@@ -39,29 +39,21 @@
     </table>
   </div>
 
-  <!-- Modal -->
-  <div *ngIf="modalAbierto" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-    <div class="bg-white rounded-lg shadow-lg w-full max-w-lg p-6">
-      <h2 class="text-xl font-bold mb-4">
-        {{ modoEdicion ? 'Editar Nota' : 'Nueva Nota' }}
-      </h2>
+  <!-- Modal QR -->
+  <div *ngIf="qrModalAbierto" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6 relative text-center">
+      <h2 class="text-xl font-bold mb-4">QR del lote: {{ qrLoteActual }}</h2>
 
-      <div class="grid gap-4 mb-4">
-        <input [(ngModel)]="notaEnEdicion.fecha" type="date" class="p-3 border rounded" />
-        <input [(ngModel)]="notaEnEdicion.lote" placeholder="Lote" class="p-3 border rounded" />
-        <input [(ngModel)]="notaEnEdicion.costoTotal" type="number" step="0.01" placeholder="Costo total" class="p-3 border rounded" />
-        <select [(ngModel)]="notaEnEdicion.proveedorId" class="p-3 border rounded">
-          <option value="">Seleccione proveedor</option>
-          <option *ngFor="let p of proveedores" [value]="p.id">{{ p.nombre }}</option>
-        </select>
+      <div *ngIf="qrImagenActual; else cargando">
+        <img [src]="qrImagenActual" alt="QR" class="mx-auto mb-4" width="200" height="200" />
       </div>
+      <ng-template #cargando>
+        <p class="text-gray-500">Cargando QR...</p>
+      </ng-template>
 
-      <div class="flex justify-end space-x-3">
-        <button (click)="cerrarModal()" class="bg-gray-400 text-white px-5 py-2 rounded hover:bg-gray-500">Cancelar</button>
-        <button (click)="guardarNota()" class="bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-700">
-          {{ modoEdicion ? 'Actualizar' : 'Guardar' }}
-        </button>
-      </div>
+      <button (click)="cerrarQRModal()" class="mt-4 bg-gray-500 text-white px-5 py-2 rounded hover:bg-gray-700">
+        Cerrar
+      </button>
     </div>
   </div>
 </div>

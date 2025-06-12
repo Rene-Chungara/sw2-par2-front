@@ -73,6 +73,10 @@ export class ProductoComponent implements OnInit {
       tipoId: this.productoEnEdicion.tipo.id,
     };
 
+    if (!this.modoEdicion) {
+      delete datos.id; 
+    }
+
     const accion = this.modoEdicion
       ? this.productoService.actualizarProducto(datos)
       : this.productoService.crearProducto(datos);
@@ -82,6 +86,7 @@ export class ProductoComponent implements OnInit {
       this.cargarProductos();
     });
   }
+
 
   eliminarProducto(id: number) {
     this.productoService.eliminarProducto(id).subscribe(() => {

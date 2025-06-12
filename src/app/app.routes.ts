@@ -12,8 +12,10 @@ import { CrearNotaEntradaComponent } from './components/crear-nota-entrada/crear
 import { VentaComponent } from './components/venta/venta.component';
 import { CrearVentaComponent } from './components/crear-venta/crear-venta.component';
 import { VentaDetalleComponent } from './components/venta-detalle/venta-detalle.component';
+import { DashboardComponent } from './components/dashboard/dashboard.component';
 
 export const routes: Routes = [
+    { path: 'dashboard', component: DashboardComponent },
     { path: 'roles', component: RolComponent },
     { path: 'permisos', component: PermisoComponent },
     { path: 'tipos', component: TipoComponent },

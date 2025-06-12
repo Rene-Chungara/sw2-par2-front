@@ -3,12 +3,15 @@ import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { provideHttpClient } from '@angular/common/http';
 import { provideGraphQL } from './provideApollo';
-
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
+import { provideAnimations } from '@angular/platform-browser/animations';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
     provideHttpClient(),
-    provideGraphQL()
+    provideGraphQL(),
+    provideAnimations(),
+    provideCharts(withDefaultRegisterables())
   ]
 };
