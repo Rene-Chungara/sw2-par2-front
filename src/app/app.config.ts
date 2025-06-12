@@ -5,6 +5,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideGraphQL } from './provideApollo';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 import { provideAnimations } from '@angular/platform-browser/animations';
+import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -12,6 +13,13 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(),
     provideGraphQL(),
     provideAnimations(),
-    provideCharts(withDefaultRegisterables())
-  ]
+    provideCharts(withDefaultRegisterables()),
+    {
+      provide: LocationStrategy,
+      useClass: HashLocationStrategy
+    }
+
+
+  ],
+  
 };
