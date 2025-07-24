@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class BiDashboardService {
-  private baseUrl = 'https://sw2-par2-bi-production.up.railway.app'; // Prefijo correcto del backend
+  private baseUrl = 'https://sw2-par2-bi-production.up.railway.app/api'; // Prefijo correcto del backend
 
   constructor(private http: HttpClient) {}
 
