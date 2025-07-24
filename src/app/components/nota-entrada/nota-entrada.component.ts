@@ -85,7 +85,7 @@ export class NotaEntradaComponent implements OnInit {
   }
 
   async obtenerQRDesdeVista(lote: string): Promise<SafeUrl | null> {
-    const url = `http://a35ff98ba79d145fdbde8ee6aafee109-1581426069.sa-east-1.elb.amazonaws.com:4000/notas/lote/${encodeURIComponent(lote)}/vista`;
+    const url = `https://microservicio-blockchain-production.up.railway.app/notas/lote/${encodeURIComponent(lote)}/vista`;
     //const url = `http://localhost:3000/notas/lote/${encodeURIComponent(lote)}/vista`;
 
     try {

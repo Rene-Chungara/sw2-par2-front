@@ -1,0 +1,45 @@
+<div class="p-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+  <!-- KPIs -->
+  <div class="bg-white rounded-lg shadow p-4 text-center" *ngIf="resumenKpis">
+    <h2 class="text-xl font-bold">Total Ventas</h2>
+    <p class="text-2xl text-green-600">{{ resumenKpis.total_ventas | number:'1.0-2' }}</p>
+  </div>
+  <div class="bg-white rounded-lg shadow p-4 text-center" *ngIf="resumenKpis">
+    <h2 class="text-xl font-bold">Total Productos Vendidos</h2>
+    <p class="text-2xl text-blue-600">{{ resumenKpis.total_productos_vendidos }}</p>
+  </div>
+  <div class="bg-white rounded-lg shadow p-4 text-center" *ngIf="resumenKpis">
+    <h2 class="text-xl font-bold">Margen Promedio</h2>
+    <p class="text-2xl text-yellow-600">{{ resumenKpis.margen_promedio | percent:'1.1-2' }}</p>
+  </div>
+</div>
+
+<!-- Gráficos -->
+<div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-6">
+  <div class="bg-white p-4 shadow rounded-lg">
+    <h3 class="font-bold mb-2">Ventas por Mes</h3>
+    <canvas baseChart
+      [data]="ventasMesData"
+      [labels]="ventasMesLabels"
+      [type]="'line'">
+    </canvas>
+  </div>
+
+  <div class="bg-white p-4 shadow rounded-lg">
+    <h3 class="font-bold mb-2">Productos más Vendidos</h3>
+    <canvas baseChart
+      [data]="productosVendidosData"
+      [labels]="productosVendidosLabels"
+      [type]="'bar'">
+    </canvas>
+  </div>
+
+  <div class="bg-white p-4 shadow rounded-lg col-span-2">
+    <h3 class="font-bold mb-2">Margen por Producto</h3>
+    <canvas baseChart
+      [data]="margenProductoData"
+      [labels]="margenProductoLabels"
+      [type]="'pie'">
+    </canvas>
+  </div>
+</div>

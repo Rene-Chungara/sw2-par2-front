@@ -1,0 +1,32 @@
+<div class="p-6 bg-white rounded-xl shadow">
+  <h2 class="text-2xl font-bold mb-6 text-gray-700">Reporte de Ventas por Tipo de Producto</h2>
+
+  <!-- 📊 Gráfico de barras -->
+  <div class="mb-10">
+    <canvas baseChart
+      [data]="chartData"
+      [options]="chartOptions"
+      [type]="'bar'">
+    </canvas>
+  </div>
+
+  <!-- 📄 Tabla -->
+  <div class="overflow-x-auto">
+    <table class="min-w-full text-sm text-left text-gray-700">
+      <thead class="bg-gray-100 text-xs uppercase">
+        <tr>
+          <th class="px-6 py-3">Tipo de Producto</th>
+          <th class="px-6 py-3">Cantidad de Ventas</th>
+          <th class="px-6 py-3">Total Generado (Bs/)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let reporte of reportes" class="border-b hover:bg-gray-50">
+          <td class="px-6 py-4">{{ reporte.tipoNombre }}</td>
+          <td class="px-6 py-4">{{ reporte.cantidadVentas }}</td>
+          <td class="px-6 py-4">{{ reporte.totalGenerado | number:'1.2-2' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

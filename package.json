@@ -22,7 +22,7 @@
     "@angular/router": "^17.3.0",
     "@apollo/client": "^3.13.8",
     "apollo-angular": "^10.0.3",
-    "chart.js": "^4.4.9",
+    "chart.js": "^4.5.0",
     "graphql": "^16.11.0",
     "ng2-charts": "^6.0.1",
     "rxjs": "~7.8.0",

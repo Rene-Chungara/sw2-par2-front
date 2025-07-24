@@ -14,6 +14,8 @@ import { CrearVentaComponent } from './components/crear-venta/crear-venta.compon
 import { VentaDetalleComponent } from './components/venta-detalle/venta-detalle.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { MlTesterComponent } from './components/ml-tester/ml-tester.component';
+import { ReporteVentasTipoComponent } from './components/reporte-ventas-tipo/reporte-ventas-tipo.component';
+import { BiDashboardComponent } from './components/bi-dashboard/bi-dashboard.component'; 
 
 export const routes: Routes = [
     { path: 'dashboard', component: DashboardComponent },
@@ -31,6 +33,8 @@ export const routes: Routes = [
     { path: 'ventas', component: VentaComponent },
     { path: 'crear-venta', component: CrearVentaComponent },
     { path: 'detalle-venta/:id', component: VentaDetalleComponent  },
+    { path: 'reportes', component: ReporteVentasTipoComponent },
+    { path: 'dashboard-bi', component: BiDashboardComponent },
 
 
     { path: '', redirectTo: '/', pathMatch: 'full' },

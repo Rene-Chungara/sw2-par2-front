@@ -10,7 +10,7 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './ml-tester.component.html'
 })
 export class MlTesterComponent {
-  baseUrl = 'http://a7e5d272cf0d445ef8555d106fd9b4b3-833511688.sa-east-1.elb.amazonaws.com';
+  baseUrl = 'http://customer-segmentation-ml-production.up.railway.app';
   apiUrl = `${this.baseUrl}/api/v1`;
 
   ci: string = '';
